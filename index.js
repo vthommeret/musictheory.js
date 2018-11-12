@@ -1,7 +1,7 @@
 // Note and interval data
 
 const NOTE_INTERVALS = [
-  ['C'],        ['PU', 'P1'],   // 0
+  ['C'],        ['P1'],         // 0
   ['C#', 'Db'], ['m2'],         // 1
   ['D'],        ['M2'],         // 2
   ['D#', 'Eb'], ['m3'],         // 3
@@ -21,6 +21,15 @@ const MINOR = 'm';
 const PERFECT = 'P';
 const AUGMENTED = '+';
 const DIMINISHED = '°';
+
+const INVERT_QUALITY = {
+  'P': 'P',
+  'M': 'm',
+  'm': 'M',
+  '°': '+',
+  '+': '°',
+};
+const INVERT_NUMBER = 9;
 
 const SUBSCRIPT_UNICODE = 8320;
 
@@ -146,7 +155,6 @@ class Interval {
               throw 'Unknown interval: ' + name + '.';
             }
             this.steps = INTERVAL_MAP[name];
-            this.quality = name[0];
             break;
           default:
             throw 'Unknown argument: ' + arg + '.';
@@ -166,6 +174,18 @@ class Interval {
           "\tquality and number ('P', 5)";
         break;
     }
+
+    // TODO: How to handle enharmonic augmented 4th / diminished 5th.
+    const interval = INTERVALS[this.steps][0];
+    this.quality = interval[0];
+    this.number = interval[1];
+  }
+
+  invert() {
+    const quality = INVERT_QUALITY[this.quality];
+    // TODO: Derive this formula.
+    const number = INVERT_NUMBER - this.number;
+    return new Interval(quality + number);
   }
   
   name() {
@@ -231,6 +251,12 @@ class Chord {
 
 // Usage
 
+const interval = new Interval('M3');
+interval.print();
+
+const interval2 = interval.invert();
+interval2.print();
+
 /*
 const M3 = new Interval('M3');
 const m3 = new Interval('m3');
@@ -245,5 +271,7 @@ const fifth = third.add(m3);
 fifth.print();
 */
 
+/*
 const chord = new Chord('C7');
 chord.print();
+*/
