@@ -22,7 +22,7 @@ const PERFECT = 'P';
 const AUGMENTED = '+';
 const DIMINISHED = '°';
 
-const SUBSCRIPT = 8320;
+const SUBSCRIPT_UNICODE = 8320;
 
 const STEPS = (NOTE_INTERVALS.length - 2) / 2; // 12
 
@@ -108,7 +108,7 @@ class Note {
       out = out[0];
     }
     if (this.octave !== undefined) {
-      out += String.fromCodePoint(SUBSCRIPT + this.octave);
+      out += String.fromCodePoint(SUBSCRIPT_UNICODE + this.octave);
     }
     return out;
   }
