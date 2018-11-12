@@ -1,6 +1,6 @@
 // Note and interval data
 
-const noteIntervals = [
+const NOTE_INTERVALS = [
   ['C'],        ['PU', 'P1'],   // 0
   ['C#', 'Db'], ['m2'],         // 1
   ['D'],        ['M2'],         // 2
@@ -16,25 +16,29 @@ const noteIntervals = [
   [],           ['P8', 'P8ve'], // 12
 ];
 
-const notes = [];
-const intervals = [];
+const SUBSCRIPT = 8320;
 
-const noteMap = {};
-const intervalMap = {};
+const STEPS = (NOTE_INTERVALS.length - 2) / 2; // 12
 
-for (let i = 0; i < noteIntervals.length; i += 2) {
-  let noteList = noteIntervals[i];
-  let intervalList = noteIntervals[i+1];
+const NOTES = [];
+const INTERVALS = [];
 
-  notes.push(noteList);
-  intervals.push(intervalList);
+const NOTE_MAP = {};
+const INTERVAL_MAP = {};
 
-  let j = i/2;
+for (let i = 0; i < NOTE_INTERVALS.length; i += 2) {
+  let noteList = NOTE_INTERVALS[i];
+  let intervalList = NOTE_INTERVALS[i+1];
+
+  NOTES.push(noteList);
+  INTERVALS.push(intervalList);
+
+  let j = i / 2;
   for (let note of noteList) {
-    noteMap[note] = j;
+    NOTE_MAP[note] = j;
   }
   for (let interval of intervalList) {
-    intervalMap[interval] = j;
+    INTERVAL_MAP[interval] = j;
   }
 }
 
@@ -46,33 +50,50 @@ class Note {
   //   name (D)
   // Optional...
   //   octave (4)
-  constructor(note, octave) {
-    switch (typeof note) {
+  constructor(val, octave) {
+    const defaultError = 'Must specify one of...\n' +
+      "\tname   ('D')\n" +
+      "\tnumber (3)\n";
+    switch (typeof val) {
       case 'string':
-        this.index = noteMap[note];
+        const octave = parseInt(val.slice(-1), 10);
+        if (!isNaN(octave)) {
+          this.octave = octave;
+          this.index = NOTE_MAP[val.slice(0, -1)];
+        } else {
+          this.index = NOTE_MAP[val];
+        }
         break;
       case 'number':
-        this.index = note % 12;
+        this.index = val % STEPS;
         break;
       default:
-        throw 'Must specify one of...\n' +
-          "\tname   ('D')\n" +
-          "\tnumber (3)\n";
+        throw defaultError;
         break;
     }
-    this.octave = octave;
+    if (this.octave !== undefined) {
+      if (octave !== undefined) {
+        throw "Can't set octave '" + octave + "'; octave '" + this.octave + "' already specified.";
+      }
+    } else if (octave !== undefined) {
+      this.octave = octave;
+    } else {
+      this.octave = defaultOctave;
+    }
   }
 
   // Takes Interval
   add(interval) {
-    return new Note(this.index + interval.steps);
+    const sum = this.index + interval.steps;
+    const octave = Math.floor(sum / STEPS);
+    return new Note(sum, this.octave + octave);
   }
 
   // Returns name
   name() {
-    let out = notes[this.index][0];
+    let out = NOTES[this.index][0];
     if (this.octave !== undefined) {
-      out += this.octave;
+      out += String.fromCodePoint(SUBSCRIPT + this.octave);
     }
     return out;
   }
@@ -97,7 +118,7 @@ class Interval {
         switch (typeof arg) {
           case 'number':
             const steps = arg;
-            const max = intervals.length - 1;
+            const max = INTERVALS.length - 1;
             if (steps > max) {
               throw 'Interval ' + steps +
                 ' is greater than max (' + max + ').';
@@ -106,10 +127,10 @@ class Interval {
             break;
           case 'string':
             const name = arg;
-            if (intervalMap[name] === undefined) {
+            if (INTERVAL_MAP[name] === undefined) {
               throw 'Unknown interval: ' + name + '.';
             }
-            this.steps = intervalMap[name];
+            this.steps = INTERVAL_MAP[name];
             break;
           default:
             throw 'Unknown argument: ' + arg + '.';
@@ -117,10 +138,10 @@ class Interval {
         break;
       case 2:
         const name = arguments[0] + arguments[1];
-        if (intervalMap[name] === undefined) {
+        if (INTERVAL_MAP[name] === undefined) {
           throw 'Unknown interval: ' + name + '.';
         }
-        this.steps = intervalMap[name];
+        this.steps = INTERVAL_MAP[name];
         break;
       default:
         throw 'Must specify one of...\n' +
@@ -132,7 +153,7 @@ class Interval {
   }
   
   name() {
-    return intervals[this.steps][0];
+    return INTERVALS[this.steps][0];
   }
 
   print() {
@@ -140,9 +161,14 @@ class Interval {
   }
 }
 
-const note = new Note('D');
-note.print();
+const M3 = new Interval('M3');
+const m3 = new Interval('m3');
 
-const interval = new Interval('m3');
-const note2 = note.add(interval);
-note2.print();
+const root = new Note('C');
+root.print();
+
+const third = root.add(M3);
+third.print();
+
+const fifth = third.add(m3);
+fifth.print();
