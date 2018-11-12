@@ -16,6 +16,12 @@ const NOTE_INTERVALS = [
   [],           ['P8', 'P8ve'], // 12
 ];
 
+const MAJOR = 'M';
+const MINOR = 'm';
+const PERFECT = 'P';
+const AUGMENTED = '+';
+const DIMINISHED = '°';
+
 const SUBSCRIPT = 8320;
 
 const STEPS = (NOTE_INTERVALS.length - 2) / 2; // 12
@@ -50,7 +56,8 @@ class Note {
   //   name (D)
   // Optional...
   //   octave (4)
-  constructor(val, octave) {
+  //   quality (M)
+  constructor(val, octave, quality) {
     const defaultError = 'Must specify one of...\n' +
       "\tname   ('D')\n" +
       "\tnumber (3)\n";
@@ -80,18 +87,26 @@ class Note {
     } else {
       this.octave = defaultOctave;
     }
+    this.quality = quality;
   }
 
   // Takes Interval
   add(interval) {
     const sum = this.index + interval.steps;
     const octave = Math.floor(sum / STEPS);
-    return new Note(sum, this.octave + octave);
+    return new Note(sum, this.octave + octave, interval.quality);
   }
 
   // Returns name
   name() {
-    let out = NOTES[this.index][0];
+    let out = NOTES[this.index];
+    if (this.quality === MINOR || this.quality === DIMINISHED) {
+      if (out.length === 2) {
+        out = out[1];
+      }
+    } else {
+      out = out[0];
+    }
     if (this.octave !== undefined) {
       out += String.fromCodePoint(SUBSCRIPT + this.octave);
     }
@@ -131,6 +146,7 @@ class Interval {
               throw 'Unknown interval: ' + name + '.';
             }
             this.steps = INTERVAL_MAP[name];
+            this.quality = name[0];
             break;
           default:
             throw 'Unknown argument: ' + arg + '.';
@@ -166,8 +182,8 @@ class Interval {
 const CHORDS = [
   ['maj', ''],          ['M3', 'P5'],
   ['m', 'min'],         ['m3', 'P5'],
-  ['dim', '°'],         ['m3', '°5'],
   ['aug', '+'],         ['M3', 'm6'],
+  ['dim', '°'],         ['m3', '°5'],
   ['sus4', 'sus', '4'], ['P4', 'P5'],
   ['maj7'],             ['M3', 'P5', 'M7'],
   ['7'],                ['M3', 'P5', 'm7'],
