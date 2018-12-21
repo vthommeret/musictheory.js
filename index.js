@@ -10,11 +10,11 @@ module.exports = {
 
   Interval: Interval,
   interval: function () {
-    return new interval.Interval(...arguments);
+    return new Interval(...arguments);
   },
 
   Chord: Chord,
   chord: function (val) {
-    return new chord.Chord(val);
+    return new Chord(val);
   },
 };
