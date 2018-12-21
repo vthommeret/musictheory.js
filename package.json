@@ -1,4 +1,6 @@
 {
+  "name": "music-theory",
+  "version": "0.0.1",
   "license": "MIT",
   "devDependencies": {
     "jest": "^23.6.0"
