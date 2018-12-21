@@ -1,63 +1,20 @@
-// Note and interval data
+const constants = require('./lib/constants.js');
 
-const NOTE_INTERVALS = [
-  ['C'],        ['P1'],         // 0
-  ['C#', 'Db'], ['m2'],         // 1
-  ['D'],        ['M2'],         // 2
-  ['D#', 'Eb'], ['m3'],         // 3
-  ['E'],        ['M3'],         // 4
-  ['F'],        ['P4'],         // 5
-  ['F#', 'Gb'], ['+4', '°5'],   // 6
-  ['G'],        ['P5'],         // 7
-  ['G#', 'Ab'], ['m6'],         // 8
-  ['A'],        ['M6'],         // 9
-  ['A#', 'Bb'], ['m7'],         // 10
-  ['B'],        ['M7'],         // 11
-  [],           ['P8', 'P8ve'], // 12
-];
+const INTERVALS = constants.INTERVALS;
+const INTERVAL_MAP = constants.INTERVAL_MAP;
 
-const MAJOR = 'M';
-const MINOR = 'm';
-const PERFECT = 'P';
-const AUGMENTED = '+';
-const DIMINISHED = '°';
+const NOTES = constants.NOTES;
+const NOTE_MAP = constants.NOTE_MAP;
 
-const INVERT_QUALITY = {
-  'P': 'P',
-  'M': 'm',
-  'm': 'M',
-  '°': '+',
-  '+': '°',
-};
-const INVERT_NUMBER = 9;
+const MAJOR = constants.MAJOR;
+const MINOR = constants.MINOR;
+const AUGMENTED = constants.AUGMENTED;
+const DIMINISHED = constants.DIMINISHED;
 
-const SUBSCRIPT_UNICODE = 8320;
+const STEPS = constants.STEPS;
 
-const STEPS = (NOTE_INTERVALS.length - 2) / 2; // 12
-
-const NOTES = [];
-const INTERVALS = [];
-
-const NOTE_MAP = {};
-const INTERVAL_MAP = {};
-
-for (let i = 0; i < NOTE_INTERVALS.length; i += 2) {
-  let noteList = NOTE_INTERVALS[i];
-  let intervalList = NOTE_INTERVALS[i+1];
-
-  NOTES.push(noteList);
-  INTERVALS.push(intervalList);
-
-  let j = i / 2;
-  for (let note of noteList) {
-    NOTE_MAP[note] = j;
-  }
-  for (let interval of intervalList) {
-    INTERVAL_MAP[interval] = j;
-  }
-}
-
-const defaultOctave = 4;
+const DEFAULT_OCTAVE = constants.DEFAULT_OCTAVE;
+const SUBSCRIPT_UNICODE = constants.SUBSCRIPT_UNICODE;
 
 class Note {
   // One of...
@@ -94,7 +51,7 @@ class Note {
     } else if (octave !== undefined) {
       this.octave = octave;
     } else {
-      this.octave = defaultOctave;
+      this.octave = DEFAULT_OCTAVE;
     }
     this.quality = quality;
   }
