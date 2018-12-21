@@ -99,10 +99,26 @@ class Note {
     this.quality = quality;
   }
 
-  // Takes Interval
+  // Adds interval
   add(interval) {
     const sum = this.index + interval.steps;
-    const octave = Math.floor(sum / STEPS);
+    const octave = ~~(sum / STEPS);
+    return new Note(sum, this.octave + octave, interval.quality);
+  }
+
+  // Subtracts interval
+  sub(interval) {
+    const diff = this.index - interval.steps;
+
+    let sum, octave;
+    if (diff < 0) {
+      sum = STEPS + diff;
+      octave = -1;
+    } else {
+      sum = diff;
+      octave = 0;
+    }
+
     return new Note(sum, this.octave + octave, interval.quality);
   }
 
@@ -251,11 +267,19 @@ class Chord {
 
 // Usage
 
-const interval = new Interval('M3');
+const interval = new Interval('m2');
 interval.print();
 
-const interval2 = interval.invert();
-interval2.print();
+const note = new Note('C');
+note.print();
+
+const note2 = note.add(interval);
+note2.print();
+
+/*
+const note3 = note2.sub(interval);
+note3.print();
+*/
 
 /*
 const M3 = new Interval('M3');
