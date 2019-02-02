@@ -14,7 +14,6 @@ new Note(0)).name() // C₄
 ### Adding major 3rd to C4
 
 ```js
-// Adding major 3rd to C4
 let c4 = new Note('C4')
 let maj3 = new Interval('M3')
 c4.add(maj3).name() // E₄
@@ -49,7 +48,6 @@ cInv1.degrees() // [3, 6]
 ### C chord second inversion
 
 ```js
-// C chord second inversion
 let c = new Chord('C')
 let cInv2 = c.invert(2)
 cInv2.degrees() // [4, 6]
